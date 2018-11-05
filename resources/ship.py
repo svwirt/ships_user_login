@@ -1,26 +1,56 @@
 from flask_restful import Resource, reqparse
-# from flask_jwt import jwt_required
+from flask_accept import accept
 from models.ship import ShipModel
 
 
 class Ship(Resource):
     parser = reqparse.RequestParser()
+    # parser.add_argument('name',
+    #                     type=str,
+    #                     # required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
     parser.add_argument('type',
                         type=str,
-                        required=True,
+                        # required=True,
                         help="This field cannot be left blank!"
                         )
     parser.add_argument('length',
                         type=float,
-                        required=True,
+                        # required=True,
                         help="This field cannot be left blank!"
-                        )
+                       )
+    parser.add_argument('self_ship',
+                        type=str,
+                        # required=True,
+                        help="This field cannot be left blank!"
+                       )
 
+
+
+    @accept('application/json', 'text/html')
     def get(self, name):
         ship = ShipModel.find_by_name(name)
         if ship:
-            return ship.json()
-        return {'message': 'Ship not found'}, 404
+            return ship.html()
+        return {'message': 'Ship not found - no content'}, 204
+
+    # @accept('application/json', 'text/html')
+    # def get(self, name):
+    #     ship = ShipModel.find_by_name(name)
+    #     if ship:
+    #         if request_wants_json():
+    #             return ship.json()
+    #         else:
+    #             return ship.html()
+    #     return {'message': 'Ship not found - no content'}, 204
+
+    # @accept('text/html')
+    # def get(self, name):
+    #     ship = ShipModel.find_by_name(name)
+    #     if ship:
+    #         return ship.html()
+    #     return {'message': 'Ship not found - no content'}, 204
 
 
     def post(self, name):
@@ -42,8 +72,12 @@ class Ship(Resource):
         ship = ShipModel.find_by_name(name)
         if ship:
             ship.delete_from_db()
-            return {'message': 'Ship deleted.'}
-        return {'message': 'Ship not found.'}, 404
+            return {'self': ship_self}, 204
+
+        return {'message': 'Ship not found.'}, 400
+
+
+
 
     def put(self, name):
         data = Ship.parser.parse_args()
@@ -51,31 +85,21 @@ class Ship(Resource):
         ship = ShipModel.find_by_name(name)
 
         if ship:
+
             ship.type = data['type']
             ship.length = data['length']
+            ship.self_ship = data['self_ship']
+            ship.save_to_db()
+            return ship.shipSelf(), 303
         else:
             ship = ShipModel(name, **data)
+            ship.save_to_db()
+            return ship.json(), 201
 
-        ship.save_to_db()
 
-        return ship.json()
+
 
 
 class Ships(Resource):
     def get(self):
-        return {'ships': list(map(lambda x: x.json(), ShipModel.query.all()))}
-
-    # TABLE_NAME = 'ships'
-    #
-    # def get(self):
-    #     connection = sqlite3.connect('data.db')
-    #     cursor = connection.cursor()
-    #
-    #     query = "SELECT * FROM ships"
-    #     result = cursor.execute(query)
-    #     ships = []
-    #     for row in result:
-    #         ships.append({'id': row[0] 'name': row[1], 'type': row[2], 'length': row[3]})
-    #     connection.close()
-    #
-    #     return {'ships': ships}
+        return {'ships': list(map(lambda x: x.json(), ShipModel.query.all()))}, 200

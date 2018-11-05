@@ -1,11 +1,11 @@
 import os
 from flask import Flask
 from flask_restful import Api
-from flask_jwt import JWT
+# from flask_jwt import JWT
 
 
 from resources.ship import Ship, Ships
-from resources.slip import Slip, Slips
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -14,17 +14,14 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 api = Api(app)
 
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 
 api.add_resource(Ship, '/ship/<string:name>')
 api.add_resource(Ships, '/ships')
-api.add_resource(Slip, '/slip/<int:number>')
-api.add_resource(Slips, '/slips')
 
 
 if __name__ == '__main__':
@@ -37,6 +34,11 @@ if __name__ == '__main__':
             db.create_all()
 
     app.run(port=5000)
+
+# if __name__ == '__main__':
+#     from db import db
+#     db.init_app(app)
+#     app.run(port=5000, debug=True)
 
 
 
