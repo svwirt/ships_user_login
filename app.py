@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_restful import Api
-# from flask_jwt import JWT
+from flask_jwt import JWT
 
 
 from resources.ship import Ship, Ships
@@ -13,10 +13,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 api = Api(app)
 
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 
 

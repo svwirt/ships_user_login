@@ -28,29 +28,21 @@ class Ship(Resource):
 
 
 
-    @accept('application/json', 'text/html')
+    @accept('application/json')
     def get(self, name):
         ship = ShipModel.find_by_name(name)
         if ship:
             return ship.html()
         return {'message': 'Ship not found - no content'}, 204
 
-    # @accept('application/json', 'text/html')
-    # def get(self, name):
-    #     ship = ShipModel.find_by_name(name)
-    #     if ship:
-    #         if request_wants_json():
-    #             return ship.json()
-    #         else:
-    #             return ship.html()
-    #     return {'message': 'Ship not found - no content'}, 204
 
-    # @accept('text/html')
-    # def get(self, name):
-    #     ship = ShipModel.find_by_name(name)
-    #     if ship:
-    #         return ship.html()
-    #     return {'message': 'Ship not found - no content'}, 204
+
+    @accept('text/html')
+    def get(self, name):
+        ship = ShipModel.find_by_name(name)
+        if ship:
+            return ship.html()
+        return {'message': 'Ship not found - no content'}, 204
 
 
     def post(self, name):
