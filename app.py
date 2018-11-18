@@ -17,9 +17,9 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.secret_key = 'jose' #app.config['JWT_SECRET_KEY']
 api = Api(app)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 
 jwt = JWTManager(app)  # /auth
@@ -90,21 +90,21 @@ api.add_resource(TokenRefresh, '/refresh')
 
 
 
-# if __name__ == '__main__':
-#     from db import db
-#     db.init_app(app)
-#
-#     if app.config['DEBUG']:
-#         @app.before_first_request
-#         def create_tables():
-#             db.create_all()
-#
-#     app.run(port=5000)
-
 if __name__ == '__main__':
     from db import db
     db.init_app(app)
-    app.run(port=5000, debug=True)
+
+    if app.config['DEBUG']:
+        @app.before_first_request
+        def create_tables():
+            db.create_all()
+
+    app.run(port=5000)
+
+# if __name__ == '__main__':
+#     from db import db
+#     db.init_app(app)
+#     app.run(port=5000, debug=True)
 
 
 
