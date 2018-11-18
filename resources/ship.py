@@ -34,13 +34,16 @@ class ShipPost(Resource):
     def post(self):
       data = Ship.parser.parse_args()
       name = data['name']
+      str1 = "https://ship-user-login.herokuapp.com/"
+      str2 = str1 + name
+      user_id = get_jwt_identity()
       # user = UserModel(find_by_username())
       if ShipModel.find_by_name(name):
           return {'message': "A ship with name '{}' already exists.".format(name)}, 400
 
       # data = Ship.parser.parse_args()
 
-      ship = ShipModel(name, data['type'], data['length'],data['owner'],  data['self_ship'])
+      ship = ShipModel(name, data['type'], data['length'], user_id,  str2)
       try:
           ship.save_to_db()
       except:
@@ -102,7 +105,7 @@ class GetUserShips(Resource):
             return user.json()
 
         return{'message': 'User not found'}, 404
-    
+
 
 
 class Ships(Resource):
