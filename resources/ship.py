@@ -43,7 +43,7 @@ class ShipPost(Resource):
 
       # data = Ship.parser.parse_args()
 
-      ship = ShipModel(name, data['type'], data['length'], user_id,  str2)
+      ship = ShipModel(name, data['type'], data['length'], data['owner'],  str2)
       try:
           ship.save_to_db()
       except:

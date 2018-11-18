@@ -14,7 +14,7 @@ class ShipModel(db.Model):
     owner = db.Column(db.String(80))
     self_ship = db.Column(db.String(80))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    users = db.relationship('UserModel')
+    users = db.relationship('UserModel', back_populates="ships")
 
     # user_name = db.Column(db.String, db.ForeignKey('users.username'))
     # users = db.relationship('UserModel')
